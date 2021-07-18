@@ -1,20 +1,31 @@
 const conexao = require('../infraestrutura/conexao')
-class Servico {
-    adiciona(servico) {
-        const sql = "INSERT INTO Servicos SET ?"
+const uploadDeArquivo = require('../arquivos/uploadDeArquivos')
+class Pet {
+    adiciona(pet, res) {
+        let sql = "INSERT INTO Pets SET ?"
 
-        conexao.query(sql, servico, (erro, resultados) => {
+        uploadDeArquivo(pet.imagem, pet.nome, (erro, novoCaminho) => {
             if (erro) {
-                console.log(erro)
+                res.status(400).json({ erro })
             } else {
-                console.log(resultados)
+                const novoPet = { nome: pet.nome, imagem: novoCaminho }
+                conexao.query(sql, novoPet, (erro, resultados) => {
+                    if (erro) {
+                        res.status(400).json(erro)
+                    } else {
+                        res.status(201).json(novoPet)
+                    }
+
+                })
             }
 
         })
+
+
     }
 
     lista(res) {
-        let sql = 'SELECT * FROM Servicos'
+        let sql = 'SELECT * FROM Pets'
 
         conexao.query(sql, (erro, resultados) => {
             if (erro) {
@@ -28,7 +39,7 @@ class Servico {
 
 
     buscaPorId(id, res) {
-        let sql = `SELECT * FROM Servicos WHERE id=${id}`
+        let sql = `SELECT * FROM Pets WHERE id=${id}`
 
         conexao.query(sql, (erro, resultados) => {
             const pet = resultados[0]
@@ -42,7 +53,7 @@ class Servico {
     }
 
     altera(id, valores, res) {
-        let sql = 'UPDATE Servicos SET ? WHERE id=?'
+        let sql = 'UPDATE Pets SET ? WHERE id=?'
 
         conexao.query(sql, [valores, id], (erro, resultados) => {
             if (erro) {
@@ -54,7 +65,7 @@ class Servico {
         })
     }
     deleta(id, res) {
-        let sql = 'DELETE FROM Servicos WHERE id=?'
+        let sql = 'DELETE FROM Pets WHERE id=?'
 
         conexao.query(sql, id, (erro, resultados) => {
             if (erro) {
@@ -67,4 +78,4 @@ class Servico {
     }
 }
 
-module.exports = new Servico;
+module.exports = new Pet

@@ -1,4 +1,3 @@
-const atendimentos = require('../models/atendimentos')
 const Atendimento = require('../models/atendimentos')
 module.exports = app => {
     app.get('/atendimentos', (req, res) => {
@@ -8,7 +7,7 @@ module.exports = app => {
         console.log(req.params)
         const id = parseInt(req.params.id)
 
-        atendimentos.buscaPorId(id, res)
+        Atendimento.buscaPorId(id, res)
     })
 
 

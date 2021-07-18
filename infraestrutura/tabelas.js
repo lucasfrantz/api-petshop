@@ -4,6 +4,7 @@ class Tabelas {
 
         this.criarAtendimentos();
         this.criarServicos();
+        this.criarPets();
     }
 
     criarAtendimentos() {
@@ -27,6 +28,18 @@ class Tabelas {
                 console.log(erro)
             } else {
                 console.log('Tabela Servicos criada com sucesso')
+            }
+        })
+    }
+
+    criarPets() {
+        let sql = 'CREATE TABLE IF NOT EXISTS Pets( id int NOT NULL AUTO_INCREMENT, nome varchar(50) NOT NULL,' +
+            'imagem varchar(200),PRIMARY KEY(id))'
+        this.conexao.query(sql, (erro) => {
+            if (erro) {
+                console.log(erro)
+            } else {
+                console.log('Tabela Pets criada com sucesso')
             }
         })
     }
