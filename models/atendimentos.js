@@ -2,10 +2,14 @@ const moment = require('moment')
 const axios = require('axios')
 const conexao = require('../infraestrutura/database/conexao')
 const repositorio = require('../repositorios/atendimentos')
+const repositorioServicos = require('../repositorios/servicos')
+const repositorioPets = require('../repositorios/pets')
+const Servicos = require('../models/servicos')
+const Pets = require('../models/pets')
 class Atendimento {
     constructor() {
         this.dataValida = (data, dataCriacao) => moment(data).isSameOrAfter(dataCriacao);
-        this.clienteValido = (tamanho) => tamanho == 11;
+        this.clienteValido = ({ tamanho }) => tamanho == 11;
         this.valida = (parametros) => {
             return this.validacoes.filter(campo => {
                 const { nome } = campo
@@ -68,7 +72,11 @@ class Atendimento {
             const atendimento = resultados[0]
             const cpf = atendimento.cliente
             const { data } = await axios.get(`http://localhost:8082/${cpf}`)
+            const servico = await Servicos.buscaPorId(atendimento.servico)
+            const pet = await Pets.buscaPorId(atendimento.pet)
             atendimento.cliente = data
+            atendimento.servico = servico
+            atendimento.pet = pet
             return atendimento
         })
     }

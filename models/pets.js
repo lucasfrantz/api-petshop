@@ -1,21 +1,19 @@
-const conexao = require('../infraestrutura/database/conexao')
+const repositorio = require('../repositorios/pets')
 const uploadDeArquivo = require('../infraestrutura/arquivos/uploadDeArquivos')
 class Pet {
-    adiciona(pet, res) {
-        let sql = "INSERT INTO Pets SET ?"
+    adiciona(pet) {
+
 
         uploadDeArquivo(pet.imagem, pet.nome, (erro, novoCaminho) => {
             if (erro) {
-                res.status(400).json({ erro })
+                return new Promise((resolve, reject) => {
+                    reject(erro)
+                })
             } else {
                 const novoPet = { nome: pet.nome, imagem: novoCaminho }
-                conexao.query(sql, novoPet, (erro, resultados) => {
-                    if (erro) {
-                        res.status(400).json(erro)
-                    } else {
-                        res.status(201).json(novoPet)
-                    }
-
+                return repositorio.adiciona(novoPet).then((resultados) => {
+                    const id = resultados.insertId
+                    return { ...novoPet, id }
                 })
             }
 
@@ -24,56 +22,25 @@ class Pet {
 
     }
 
-    lista(res) {
-        let sql = 'SELECT * FROM Pets'
-
-        conexao.query(sql, (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json(resultados)
-            }
-
-        })
+    lista() {
+        return repositorio.lista()
     }
 
 
-    buscaPorId(id, res) {
-        let sql = `SELECT * FROM Pets WHERE id=${id}`
-
-        conexao.query(sql, (erro, resultados) => {
-            const pet = resultados[0]
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json(pet)
-            }
-
+    buscaPorId(id) {
+        return repositorio.buscaPorId(id).then((resultados) => {
+            return resultados[0]
         })
     }
 
-    altera(id, valores, res) {
-        let sql = 'UPDATE Pets SET ? WHERE id=?'
-
-        conexao.query(sql, [valores, id], (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json({ ...valores, id })
-            }
-
+    altera(id, valores) {
+        return repositorio.altera(id, valores).then((resultados) => {
+            return { ...valores, id }
         })
     }
-    deleta(id, res) {
-        let sql = 'DELETE FROM Pets WHERE id=?'
-
-        conexao.query(sql, id, (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json({ id })
-            }
-
+    deleta(id) {
+        return repositorio.deleta(id).then((resultados) => {
+            return { id }
         })
     }
 }

@@ -9,7 +9,7 @@ class Tabelas {
 
     criarAtendimentos() {
         let sql = 'CREATE TABLE IF NOT EXISTS Atendimentos( id int NOT NULL AUTO_INCREMENT,cliente varchar(11) NOT NULL,' +
-            'pet varchar(20), data datetime NOT NULL, dataCriacao datetime NOT NULL,servico varchar(20) NOT NULL, ' +
+            'pet int not null, data datetime NOT NULL, dataCriacao datetime NOT NULL,servico int NOT NULL, ' +
             'status varchar(20) NOT NULL, observacoes text, PRIMARY KEY(id))'
         this.conexao.query(sql, (erro) => {
             if (erro) {

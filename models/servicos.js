@@ -1,69 +1,26 @@
 const conexao = require('../infraestrutura/database/conexao')
+const repositorio = require('../repositorios/servicos')
 class Servico {
     adiciona(servico) {
-        const sql = "INSERT INTO Servicos SET ?"
-
-        conexao.query(sql, servico, (erro, resultados) => {
-            if (erro) {
-                console.log(erro)
-            } else {
-                console.log(resultados)
-            }
-
-        })
+        return repositorio.adiciona(servico)
     }
 
-    lista(res) {
-        let sql = 'SELECT * FROM Servicos'
-
-        conexao.query(sql, (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json(resultados)
-            }
-
-        })
+    lista() {
+        return repositorio.lista()
     }
 
 
-    buscaPorId(id, res) {
-        let sql = `SELECT * FROM Servicos WHERE id=${id}`
-
-        conexao.query(sql, (erro, resultados) => {
-            const pet = resultados[0]
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json(pet)
-            }
-
+    buscaPorId(id) {
+        return repositorio.buscaPorId(id).then((resultados) => {
+            return resultados[0]
         })
     }
 
-    altera(id, valores, res) {
-        let sql = 'UPDATE Servicos SET ? WHERE id=?'
-
-        conexao.query(sql, [valores, id], (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json({ ...valores, id })
-            }
-
-        })
+    altera(id, valores) {
+        return repositorio.altera(id, valores)
     }
-    deleta(id, res) {
-        let sql = 'DELETE FROM Servicos WHERE id=?'
-
-        conexao.query(sql, id, (erro, resultados) => {
-            if (erro) {
-                res.status(400).json(erro)
-            } else {
-                res.status(200).json({ id })
-            }
-
-        })
+    deleta(id) {
+        return repositorio.deleta(id)
     }
 }
 

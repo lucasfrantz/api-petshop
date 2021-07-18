@@ -1,31 +1,49 @@
 const Pet = require('../models/pets')
 module.exports = app => {
     app.get('/pets', (req, res) => {
-        Pet.lista(res)
+        Pet.lista().then((resultados) => {
+            res.status(200).json(resultados)
+        }).catch((erros) => {
+            res.status(400).json(erros)
+        })
     })
     app.get('/pets/:id', (req, res) => {
         console.log(req.params)
         const id = parseInt(req.params.id)
 
-        Pet.buscaPorId(id, res)
+        Pet.buscaPorId(id).then((resultados) => {
+            res.status(200).json(resultados)
+        }).catch((erros) => {
+            res.status(400).json(erros)
+        })
     })
 
 
     app.post('/pets', (req, res) => {
-        //console.log(req.body);
-        const atendimento = req.body;
-        Pet.adiciona(atendimento, res);
-        //res.send('Voce esta na rota de atendimentos e POST')
+        const pet = req.body
+        Pet.adiciona(pet).then((resultados) => {
+            res.status(201).json(resultados)
+        }).catch((erros) => {
+            res.status(400).json(erros)
+        })
     })
 
     app.patch('/pets/:id', (req, res) => {
         const id = parseInt(req.params.id)
         const valores = req.body;
-        Pet.altera(id, valores, res)
+        Pet.altera(id, valores).then((resultados) => {
+            res.status(200).json(resultados)
+        }).catch((erros) => {
+            res.status(400).json(erros)
+        })
     })
 
     app.delete('/pets/:id', (req, res) => {
         const id = parseInt(req.params.id)
-        Pet.deleta(id, res)
+        Pet.deleta(id).then((resultados) => {
+            res.status(200).json(resultados)
+        }).catch((erros) => {
+            res.status(400).json(erros)
+        })
     })
 }
